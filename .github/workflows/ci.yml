@@ -104,28 +104,9 @@ jobs:
           files: ./target/scala-${{steps.get-scala-version.outputs.scala-version}}/jacoco/report/aggregate/jacoco.xml
           verbose: true
 
-  docsite:
-    name: Build documentation site
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout current branch
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Setup Scala
-        uses: actions/setup-java@v3.5.0
-        with:
-          distribution: 'temurin'
-          java-version: '17.0.4'
-          cache: 'sbt'
-
-      - name: Build docsite
-        run: sbt ubidocGenerate
-
   publish:
     name: Publish
-    needs: [wartremover, scalafix, scalafmt, tests, docsite]
+    needs: [wartremover, scalafix, scalafmt, tests]
     runs-on: ubuntu-22.04
     if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta')
     steps:
