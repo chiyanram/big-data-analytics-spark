@@ -5,4 +5,4 @@ addSbtPlugin("com.softwaremill.sbt-softwaremill" % "sbt-softwaremill-extra" % "2
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.13.0")
 addSbtPlugin("it.nicolasfarabegoli" % "sbt-conventional-commits" % "2.3.0")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "3.2.5")
-addSbtPlugin("com.github.sbt" % "sbt-jacoco" % "3.4.0")
+addSbtPlugin("com.github.sbt" % "sbt-jacoco" % "3.5.0")
