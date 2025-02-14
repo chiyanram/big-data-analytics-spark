@@ -2,7 +2,7 @@ import com.softwaremill.SbtSoftwareMillCommon.commonSmlBuildSettings
 
 lazy val commonSettings = commonSmlBuildSettings ++ Seq(
   organization := "com.rmurugaian.spark",
-  scalaVersion := "2.13.15",
+  scalaVersion := "2.13.16",
   versionScheme := Some("early-semver"),
 )
 
