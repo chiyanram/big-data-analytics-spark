@@ -8,7 +8,7 @@ lazy val commonSettings = commonSmlBuildSettings ++ Seq(
 
 ThisBuild / wartremoverErrors ++= Warts.allBut(Wart.Overloading, Wart.Equals)
 
-val sparkSql = "org.apache.spark" %% "spark-sql" % "3.5.4"
+val sparkSql = "org.apache.spark" %% "spark-sql" % "3.5.5"
 val sparkCore = "org.apache.spark" %% "spark-core" % "3.5.4"
 val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
