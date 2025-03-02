@@ -1,19 +1,77 @@
-tagFormat: 'v${version}'
 branches:
-  - 'master'
-
+  - 'main'
 plugins:
-  - - '@semantic-release/commit-analyzer'
-    - preset: conventionalcommits
-  - - '@semantic-release/release-notes-generator'
-    - preset: conventionalcommits
-  - '@semantic-release/changelog'
-  - - '@semantic-release/exec'
-    - publishCmd: |
-        export CI_COMMIT_TAG="true"
-        sbt ci-release
-        sbt 'set ThisBuild / version := "${nextRelease.version}"' docker:publish
-  - - '@semantic-release/git'
-    - assets:
-        - CHANGELOG.md
+  - '@semantic-release/commit-analyzer'
+  - '@semantic-release/release-notes-generator'
+  - '@semantic-release/exec'
+  - "@semantic-release/git"
   - '@semantic-release/github'
+  - '@semantic-release/changelog'
+verifyConditions:
+  - '@semantic-release/github'
+  - '@semantic-release/git'
+generateNotes:
+  - path: "@semantic-release/release-notes-generator"
+    linkCompare: true
+    linkReferences: true
+    presetConfig:
+      types:
+        - type: build
+          section: 📦️ Build
+          hidden: false
+        - type: ci
+          section: 👷 CI/CD
+          hidden: false
+        - type: docs
+          section: 📖 Docs
+          hidden: false
+        - type: feat
+          section: ✨ Features
+          hidden: false
+        - type: fix
+          section: ⛑️ Fixes
+          hidden: false
+        - type: perf
+          section: ⚡ Performance
+          hidden: false
+        - type: refactor
+          section: ♻️ Refactorings
+          hidden: false
+        - type: revert
+          section: ⏪ Reverts
+          hidden: false
+        - type: style
+          section: 🎨 Style
+          hidden: false
+        - type: test
+          section: ✅ Tests
+          hidden: false
+prepare:
+  - path: '@semantic-release/changelog'
+    changelogFile: 'CHANGELOG.md'
+  - path: "@semantic-release/exec"
+    shell: "/bin/bash"
+    prepareCmd: >-
+      lineNumber=$(awk '/version .*:=/{print NR}' version.sbt);
+      if [[ ! -z $lineNumber ]]; then
+      sed -r -i ''"$lineNumber"'s/[0-9]+\.[0-9]+\.[0-9]+/'"${nextRelease.version}"'/' version.sbt;
+      fi;
+  - path: "@semantic-release/git"
+    message: "chore(release): v${lastRelease.version || '0.0.0'} → v${nextRelease.version}"
+    assets:
+      - version.sbt
+      - CHANGELOG.md
+publish:
+  - path: '@semantic-release/github'
+    assets:
+      - 'target/scala-2.12/*.jar'
+  - path: '@semantic-release/exec'
+    cmd: 'RELEASE_VERSION="${nextRelease.version}" sbt package publish'
+success:
+  - path: '@semantic-release/github'
+    successComment: 'This ${issue.pull_request ? "pull request" : "issue"} is included in version ${nextRelease.version}.'
+fail:
+  - path: '@semantic-release/github'
+    failComment: 'The release failed with the following error: ${error.message}'
+
+preset: "conventionalcommits"

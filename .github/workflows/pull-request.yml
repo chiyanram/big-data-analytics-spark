@@ -1,0 +1,40 @@
+name: Feature Branch CI
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - '**'
+jobs:
+  scalafmt:
+    name: Scalafmt lint
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Coursier cache
+        uses: coursier/cache-action@v6
+      - name: Setup Scala
+        uses: coursier/setup-action@v1
+        with:
+          jvm: "temurin:17"
+      - name: Scalafix checks
+        run: sbt -v lint
+
+  tests:
+    name: Run unit tests
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Coursier cache
+        uses: coursier/cache-action@v6
+      - name: Setup Scala
+        uses: coursier/setup-action@v1
+        with:
+          jvm: "temurin:17"
+      - name: Scalatest
+        run: sbt -v ciTest
+          
+
+
+

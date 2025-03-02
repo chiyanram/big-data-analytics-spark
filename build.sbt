@@ -1,36 +1,78 @@
+import Dependencies.*
 import com.softwaremill.SbtSoftwareMillCommon.commonSmlBuildSettings
+import com.softwaremill.SbtSoftwareMillExtra.dependencyCheckSettings
+import com.softwaremill.SbtSoftwareMillExtra.dependencyUpdatesSettings
 
-lazy val commonSettings = commonSmlBuildSettings ++ Seq(
-  organization := "com.rmurugaian.spark",
-  scalaVersion := "2.13.15",
-  versionScheme := Some("early-semver"),
+ThisBuild / scalaVersion             := "2.13.16"
+ThisBuild / Test / parallelExecution := false
+ThisBuild / Test / fork              := false
+
+lazy val startupTransition: State => State = "conventionalCommits" :: _
+Global / onLoad := startupTransition.compose((Global / onLoad).value)
+
+inThisBuild(
+  List(
+    description       := "Workspace to try and learn spark",
+    organization      := "com.rmurugaian.scala",
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
 )
 
-ThisBuild / wartremoverErrors ++= Warts.allBut(Wart.Overloading, Wart.Equals)
+addCommandAlias("lint", "; scalafmtSbtCheck; scalafmtCheckAll; Compile/scalafix --check; Test/scalafix --check")
+addCommandAlias("fix", "; Compile/scalafix; Test/scalafix; scalafmtSbt; scalafmtAll")
+addCommandAlias("ciTest", "; coverage; test; coverageReport; coverageOff")
 
-val sparkSql = "org.apache.spark" %% "spark-sql" % "3.5.4"
-val sparkCore = "org.apache.spark" %% "spark-core" % "3.5.4"
-val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
+// Extra settings
+lazy val extraSmlBuildSettings = commonSmlBuildSettings ++ dependencyUpdatesSettings ++ dependencyCheckSettings
 
-lazy val rootProject = (project in file("."))
-  .settings(commonSettings *)
+//noinspection scala2InSource3
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin, DockerPlugin)
+  .settings(extraSmlBuildSettings)
   .settings(
-    publishArtifact := false,
-    name := "big-data-analytics-spark",
-    jacocoAggregateReportSettings := JacocoReportSettings(
-      title = "mdm coverage report",
-      formats = Seq(JacocoReportFormats.XML),
-    ),
-    publish / skip := true,
+    name             := "big-data-analytics-spark",
+    buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "com.rmurugaian.scala.common"
   )
-  .aggregate(module1)
-
-lazy val module1: Project = (project in file("module1"))
-  .settings(commonSettings *)
   .settings(
-    name := "module1",
-    libraryDependencies ++= Seq(
-      scalaTest,
-      sparkSql,
+    scalacOptions ++= Seq("-deprecation", "-unchecked", "-Yrangepos"),
+    javacOptions ++= Seq("-source", "17", "-target", "17"),
+    Test / scalacOptions ++= Seq(
+      // Allow using -Wnonunit-statement to find bugs in tests without exploding from scalatest assertions
+      "-Wconf:msg=unused value of type org.scalatest.Assertion:s",
+      "-Wconf:msg=unused value of type org.scalamock:s"
+    )
+  )
+  .settings(assembly / assemblyMergeStrategy := {
+    case PathList("META-INF", xs @ _*)                   => MergeStrategy.discard
+    case PathList(ps @ _*) if ps.last.endsWith(".class") => MergeStrategy.first
+    case _                                               => MergeStrategy.first
+  })
+  .settings(libraryDependencies ++= awsDependencies ++ testingDependencies ++ logDependencies)
+  .settings(
+    docker / dockerfile := {
+      // The assembly task generates a fat JAR file
+      val artifact: File     = assembly.value
+      val artifactTargetPath = s"/app/${artifact.name}"
+
+      new Dockerfile {
+        from("eclipse-temurin:17-jre-alpine")
+        add(artifact, artifactTargetPath)
+        entryPoint("java", "-jar", artifactTargetPath)
+      }
+    },
+    docker / buildOptions := BuildOptions(
+      cache = false,
+      removeIntermediateContainers = BuildOptions.Remove.Always,
+      pullBaseImage = BuildOptions.Pull.Always,
+      platforms = List("linux/amd64")
     ),
+    docker / imageNames := Seq(
+      ImageName(
+        namespace = Some("chiyanram"),
+        repository = "big-data-analytics-spark",
+        tag = Some(version.value)
+      )
+    )
   )
