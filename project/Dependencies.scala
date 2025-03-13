@@ -15,7 +15,7 @@ object Dependencies {
     "ch.qos.logback"              % "logback-classic" % "1.5.17"
   )
 
-  private val testContainersVersion = "0.41.8"
+  private val testContainersVersion = "0.43.0"
 
   // Testing Dependencies
   lazy val testingDependencies: Seq[ModuleID] = Seq(
