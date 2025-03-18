@@ -1,7 +1,7 @@
 import sbt.*
 
 object Dependencies {
-  private val awsSdkVersion = "2.30.38"
+  private val awsSdkVersion = "2.31.1"
 
   // AWS SDK Dependencies
   lazy val awsDependencies: Seq[ModuleID] = Seq(
