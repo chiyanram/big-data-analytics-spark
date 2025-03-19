@@ -3,10 +3,7 @@ package com.rmurugaian.scala.common.util
 object DirectoryUtils {
 
   def findDirs(key: String, paths: Seq[String]): Set[String] = paths
-    .map(it => split(key, it))
-    .filter(it => it.nonEmpty)
-    .map(it => it.get)
-    .toSet
+    .map(it => split(key, it)).filter(it => it.nonEmpty).map(it => it.get).toSet
 
   private def split(key: String, it: String) =
     try {

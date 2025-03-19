@@ -9,7 +9,7 @@ class ValidationsSpec extends AnyFlatSpec with GivenWhenThen {
 
   "Validations.notEmpty" should "return the value if it is not empty" in {
     Given("A non-empty value and a property name")
-    val value        = "value"
+    val value = "value"
     val propertyName = "property"
 
     When("The validation is executed")
@@ -21,7 +21,7 @@ class ValidationsSpec extends AnyFlatSpec with GivenWhenThen {
 
   it should "throw a BadRequestException for an empty value" in {
     Given("An empty value and a property name")
-    val value        = ""
+    val value = ""
     val propertyName = "flex_id"
 
     When("The validation is executed")

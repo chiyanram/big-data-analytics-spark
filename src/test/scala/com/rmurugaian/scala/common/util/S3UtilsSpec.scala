@@ -31,7 +31,9 @@ class S3UtilsSpec extends AnyFeatureSpec with GivenWhenThen {
       val exception =
         intercept[BadRequestException](S3Utils.splitBucketAndKey(invalidUrl))
 
-      Then("a BadRequestException should be thrown with the appropriate message")
+      Then(
+        "a BadRequestException should be thrown with the appropriate message",
+      )
       exception.getMessage should
         include("Given sourcePath flex_id not matches with regex pattern")
     }
