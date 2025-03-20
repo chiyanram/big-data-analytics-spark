@@ -11,7 +11,7 @@ object Dependencies {
 
   lazy val logDependencies: Seq[ModuleID] = Seq(
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLogging,
-    "ch.qos.logback" % "logback-classic" % "1.5.17",
+    "ch.qos.logback" % "logback-classic" % "1.5.18",
   )
 
   // Testing Dependencies
