@@ -11,4 +11,4 @@ addSbtPlugin(
 addSbtPlugin(
   "com.softwaremill.sbt-softwaremill" % "sbt-softwaremill-extra" % "2.0.21",
 )
-addSbtPlugin("org.wartremover" % "sbt-wartremover" % "3.3.1")
+addSbtPlugin("org.wartremover" % "sbt-wartremover" % "3.3.2")
