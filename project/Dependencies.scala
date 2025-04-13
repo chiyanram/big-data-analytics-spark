@@ -1,7 +1,7 @@
 import sbt.*
 
 object Dependencies {
-  private val awsSdkVersion = "2.31.11"
+  private val awsSdkVersion = "2.31.21"
   private val scalaLogging = "3.9.5"
   private val testContainersVersion = "0.43.0"
 
