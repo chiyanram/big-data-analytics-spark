@@ -6,9 +6,9 @@ addSbtPlugin("it.nicolasfarabegoli" % "sbt-conventional-commits" % "2.3.0")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.2")
 addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.11.0")
 addSbtPlugin(
-  "com.softwaremill.sbt-softwaremill" % "sbt-softwaremill-common" % "2.0.21",
+  "com.softwaremill.sbt-softwaremill" % "sbt-softwaremill-common" % "2.0.25",
 )
 addSbtPlugin(
-  "com.softwaremill.sbt-softwaremill" % "sbt-softwaremill-extra" % "2.0.21",
+  "com.softwaremill.sbt-softwaremill" % "sbt-softwaremill-extra" % "2.0.25",
 )
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "3.3.1")
